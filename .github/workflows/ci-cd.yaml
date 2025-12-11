@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: 
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   test:
@@ -42,14 +42,14 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: 
-          password: 
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=sha,prefix=sha-
             type=raw,value=latest
@@ -59,15 +59,15 @@ jobs:
         with:
           context: .
           push: true
-          tags: 
-          labels: 
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Update Kubernetes manifests
         env:
-          GITHUB_TOKEN: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          SHORT_SHA=$(echo  | cut -c1-7)
-          sed -i "s|image: ghcr.io/.*:.*|image: ghcr.io/:sha-${SHORT_SHA}|g" k8s/deployment.yaml
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          sed -i "s|image: ghcr.io/.*:.*|image: ghcr.io/${{ github.repository }}:sha-${SHORT_SHA}|g" k8s/deployment.yaml
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add k8s/deployment.yaml
