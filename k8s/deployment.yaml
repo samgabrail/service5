@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: service5
-          image: ghcr.io/samgabrail/service5:latest
+          image: ghcr.io/samgabrail/service5:sha-6f9d4c9
           ports:
             - containerPort: 3000
           env:
