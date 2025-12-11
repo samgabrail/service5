@@ -1,0 +1,6 @@
+site_name: service5
+site_description: Order processing microservice for the TechCorp e-commerce platform. Handles order creation, status tracking, and fulfillment integration.
+nav:
+  - Home: index.md
+plugins:
+  - techdocs-core
